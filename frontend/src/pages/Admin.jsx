@@ -1,21 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
+import useFetch from '../hooks/useFetch';
 
 function Admin() {
   const { getToken } = useAuth();
-  const [products, setProducts] = useState([]);
+  const { data: products, loading, error } = useFetch(`${import.meta.env.VITE_API_URL}/products`);
   const [form, setForm] = useState({ name: '', description: '', price: '', stock: '' });
   const [editingId, setEditingId] = useState(null);
-  const [loading, setLoading] = useState(false);
-
-  // Ambil semua produk
-  const fetchProducts = () => {
-    fetch('http://localhost:8000/api/products')
-      .then(res => res.json())
-      .then(data => setProducts(data));
-  };
-
-  useEffect(() => { fetchProducts(); }, []);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -27,8 +18,8 @@ function Admin() {
     setLoading(true);
 
     const url = editingId
-      ? `http://localhost:8000/api/products/${editingId}`
-      : 'http://localhost:8000/api/products';
+      ? `${import.meta.env.VITE_API_URL}/products/${editingId}`
+      : `${import.meta.env.VITE_API_URL}/products`;
 
     const method = editingId ? 'PUT' : 'POST';
 
